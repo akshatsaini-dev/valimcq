@@ -107,14 +107,14 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
         Check Answers
       </Button>
       {showResults && (
-        <div className="text-center text-xl font-bold">
-          Score: {score.correct}/{score.total}
-        </div>
-      )}
-      {showResults && (
         <Button onClick={handleRetest} className="w-full pppangaia">
           Retest
         </Button>
+      )}
+      {showResults && (
+        <div className="text-center text-xl font-bold">
+          Score: {score.correct}/{score.total}
+        </div>
       )}
     </div>
   );
