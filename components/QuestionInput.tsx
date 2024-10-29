@@ -31,7 +31,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         <RadioGroup
           id="format"
           value={format}
-          onValueChange={(value: "inline" | "separate") => setFormat(value)}
+          onValueChange={(value: "inline" | "separate" | "markdown") =>
+            setFormat(value)
+          }
           className="flex space-x-4"
         >
           <div className="flex items-center space-x-2">
@@ -41,6 +43,10 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="separate" id="separate" />
             <Label htmlFor="separate">Answers at the end</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="markdown" id="markdown" />
+            <Label htmlFor="markdown">Answers as Markdown</Label>
           </div>
         </RadioGroup>
       </div>

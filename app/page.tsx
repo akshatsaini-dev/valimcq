@@ -17,11 +17,12 @@ export default function Home() {
   const parseQuestions = (
     input: string,
     answers: string,
-    format: "inline" | "separate"
+    format: "inline" | "separate" | "markdown"
   ): Question[] => {
     const questionBlocks = input
       .split(/\d+\./)
       .filter((block) => block.trim() !== "");
+
     let parsedAnswers: string[][] = [];
 
     if (format === "separate") {
@@ -33,22 +34,31 @@ export default function Home() {
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line !== "");
+
       const questionText = lines[0];
       const options: string[] = [];
       let correctAnswers: string[] = [];
 
       for (let i = 1; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.startsWith("Ans:")) {
-          correctAnswers = line
-            .substring(4)
-            .split(",")
-            .map((a) => a.trim());
-          break;
+        let line = lines[i];
+        let isCorrect = false;
+
+        // Check if it's markdown format and if the option starts with '!'
+        if (format === "markdown" && line.startsWith("!")) {
+          isCorrect = true;
+          line = line.substring(1).trim(); // Remove '!' to store the option without it
         }
+
         const match = line.match(/^([A-Z])\.(.*)/);
         if (match) {
-          options.push(line);
+          const optionText = line;
+          options.push(optionText);
+
+          // If the option is correct, add it to the correctAnswers list
+          if (isCorrect) {
+            const optionLetter = optionText.split(".")[0];
+            correctAnswers.push(optionLetter);
+          }
         }
       }
 
