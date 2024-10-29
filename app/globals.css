@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@font-face {
+  font-family: "PPPangaia";
+  src: url("/Fonts/PPPangaia-Bold.otf") format("opentype"); /* Adjust path as needed */
+  font-weight: normal;
+  font-style: normal;
 }
+
+body {
+  font-family: "PPPangaia", Arial, Helvetica, sans-serif; /* Fallback fonts */
+}
+
 @font-face {
   font-family: "Knowhere";
   src: url("/Fonts/Knowhere-PersonalUse.otf") format("opentype"); /* Adjust path as needed */
