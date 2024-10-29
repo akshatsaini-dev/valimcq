@@ -87,7 +87,13 @@ export default function Home() {
       <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
         VALIMCQ
       </h1>
-      <p className="text-sm pppangaia text-gray-500">made by axshatInd</p>
+      <a
+        href="https://www.linkedin.com/in/axshatind"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <p className="text-sm pppangaia text-gray-500">made by axshatInd</p>
+      </a>
 
       {/* Position the ThemeToggle button in the top right corner */}
       <div className="absolute top-4 right-4 z-50">
