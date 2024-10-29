@@ -83,11 +83,12 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 space-y-8">
+    <main className="container mx-auto p-4 space-y-4">
       <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
-        {" "}
         VALIMCQ
       </h1>
+      <p className="text-sm text-gray-500">made by axshatInd</p>{" "}
+      {/* Added small text here */}
       <ThemeToggle />
       <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       {questions.length > 0 && <QuestionDisplay questions={questions} />}
