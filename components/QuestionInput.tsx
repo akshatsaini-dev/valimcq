@@ -44,7 +44,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="format" className="pppangaia">
-          Select Input Format
+          Select Input Flow
         </Label>
         <RadioGroup
           id="format"
@@ -52,7 +52,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           onValueChange={(value: "inline" | "separate" | "markdown") =>
             setFormat(value)
           }
-          className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0"
+          className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 pt-4" // Added padding-top
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="inline" id="inline" />
