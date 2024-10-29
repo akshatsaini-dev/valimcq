@@ -91,8 +91,22 @@ export default function Home() {
         href="https://www.linkedin.com/in/axshatind"
         target="_blank"
         rel="noopener noreferrer"
+        className="flex items-center space-x-1"
       >
-        <p className="text-sm pppangaia text-gray-500">made by axshatInd</p>
+        <p className="text-sm pppangaia text-gray-500">
+          made by{" "}
+          <span className="flex items-center">
+            axshatInd
+            <svg
+              className="h-4 w-4 text-gray-500 ml-1" // Adjust margin as needed
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M22.225 0H1.775C.796 0 0 .796 0 1.775v20.451C0 23.204.796 24 1.775 24h20.451C23.204 24 24 23.204 24 22.225V1.775C24 .796 23.204 0 22.225 0zM7.25 20.452H3.75V9h3.5v11.452zm-1.75-12.94a2.02 2.02 0 1 1 0-4.04 2.02 2.02 0 0 1 0 4.04zm16.44 12.94h-3.5v-5.65c0-1.352-.027-3.09-1.88-3.09-1.877 0-2.166 1.474-2.166 3.007v5.733h-3.5V9h3.5v1.55h.048c.487-.92 1.675-1.894 3.448-1.894 3.688 0 4.359 2.43 4.359 5.59v6.206z" />
+            </svg>
+          </span>
+        </p>
       </a>
 
       {/* Position the ThemeToggle button in the top right corner */}
