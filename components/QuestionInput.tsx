@@ -10,14 +10,16 @@ interface QuestionInputProps {
   onQuestionsSubmit: (
     questions: string,
     answers: string,
-    format: "inline" | "separate"
+    format: "inline" | "separate" | "markdown"
   ) => void;
 }
 
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
-  const [format, setFormat] = useState<"inline" | "separate">("inline");
+  const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
+    "inline"
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
