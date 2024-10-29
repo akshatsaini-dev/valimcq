@@ -52,7 +52,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           onValueChange={(value: "inline" | "separate" | "markdown") =>
             setFormat(value)
           }
-          className="flex space-x-4"
+          className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0"
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="inline" id="inline" />
@@ -74,14 +74,14 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         }
         value={questions}
         onChange={(e) => setQuestions(e.target.value)}
-        className="min-h-[200px]"
+        className="min-h-[400px]" // Increased height
       />
       {format === "separate" && (
         <Textarea
           placeholder={getPlaceholder().answers}
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
-          className="min-h-[100px]"
+          className="min-h-[200px]" // Increased height
         />
       )}
       <Button type="submit">Submit Questions</Button>
