@@ -85,7 +85,7 @@ export default function Home() {
 
   return (
     <main className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold">MCQ Quiz</h1>
+      <h1 className="text-3xl font-bold"> VALIMCQ</h1>
       <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       {questions.length > 0 && <QuestionDisplay questions={questions} />}
     </main>
