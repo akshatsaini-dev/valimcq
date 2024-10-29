@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,24 +25,19 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
   const handleOptionClick = (questionIndex: number, option: string) => {
     setSelectedAnswers((prev) => {
       const newAnswers = new Set(prev[questionIndex] || []);
-      if (newAnswers.has(option)) {
-        newAnswers.delete(option);
-      } else {
-        newAnswers.add(option);
-      }
+      newAnswers.has(option)
+        ? newAnswers.delete(option)
+        : newAnswers.add(option);
       return { ...prev, [questionIndex]: newAnswers };
     });
   };
 
-  const isCorrect = (questionIndex: number, option: string) => {
-    if (!showResults) return false;
-    const optionLetter = option.split(".")[0];
-    return questions[questionIndex].correctAnswers.includes(optionLetter);
-  };
+  const isCorrect = (questionIndex: number, option: string) =>
+    showResults &&
+    questions[questionIndex].correctAnswers.includes(option.split(".")[0]);
 
-  const isSelected = (questionIndex: number, option: string) => {
-    return selectedAnswers[questionIndex]?.has(option) || false;
-  };
+  const isSelected = (questionIndex: number, option: string) =>
+    selectedAnswers[questionIndex]?.has(option) || false;
 
   const calculateScore = () => {
     let correctCount = 0;
@@ -64,28 +57,27 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
   };
 
   useEffect(() => {
-    if (showResults) {
-      calculateScore();
-    }
+    if (showResults) calculateScore();
   }, [showResults]);
 
   return (
     <div className="space-y-6">
       {questions.map((question, index) => (
-        <Card key={index}>
+        <Card key={index} className="p-2 sm:p-4">
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-lg sm:text-xl whitespace-normal">
               Question {index + 1}: {question.text}
             </CardTitle>
           </CardHeader>
+
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               {question.options.map((option, optionIndex) => (
                 <Button
                   key={optionIndex}
                   onClick={() => handleOptionClick(index, option)}
                   variant={isSelected(index, option) ? "default" : "outline"}
-                  className={`justify-start ${
+                  className={`justify-start break-words whitespace-normal min-h-[3rem] h-auto ${
                     showResults && isCorrect(index, option)
                       ? "bg-green-500 hover:bg-green-600"
                       : showResults && isSelected(index, option)
