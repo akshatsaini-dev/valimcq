@@ -17,7 +17,6 @@ interface QuestionInputProps {
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
-  // Set the default format to "markdown"
   const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
     "markdown"
   );
@@ -88,9 +87,13 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           className="min-h-[200px]" // Increased height
         />
       )}
-      <Button type="submit" className="pppangaia">
-        Submit Questions
-      </Button>
+      <div className="flex justify-end">
+        {" "}
+        {/* Align button to the right */}
+        <Button type="submit" className="pppangaia">
+          Submit Questions
+        </Button>
+      </div>
     </form>
   );
 }
