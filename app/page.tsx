@@ -77,7 +77,7 @@ export default function Home() {
   const handleQuestionsSubmit = (
     questions: string,
     answers: string,
-    format: "inline" | "separate"
+    format: "inline" | "separate" | "markdown" // Include "markdown" here
   ) => {
     const parsedQuestions = parseQuestions(questions, answers, format);
     setQuestions(parsedQuestions);
