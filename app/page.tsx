@@ -4,6 +4,7 @@ import { useState } from "react";
 import { QuestionInput } from "../components/QuestionInput";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { parseAnswers } from "../components/AnswerParser";
+import ThemeToggle from "../components/ThemeToggle";
 
 interface Question {
   text: string;
@@ -87,6 +88,7 @@ export default function Home() {
         {" "}
         VALIMCQ
       </h1>
+      <ThemeToggle />
       <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       {questions.length > 0 && <QuestionDisplay questions={questions} />}
     </main>
