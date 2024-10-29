@@ -1,7 +1,7 @@
 // components/ThemeToggle.js
 "use client"; // Ensure this component can manage state
 
-import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
+import { MoonIcon, SunIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
