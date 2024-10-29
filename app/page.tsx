@@ -43,10 +43,9 @@ export default function Home() {
         let line = lines[i];
         let isCorrect = false;
 
-        // Check if it's markdown format and if the option starts with '!'
         if (format === "markdown" && line.startsWith("!")) {
           isCorrect = true;
-          line = line.substring(1).trim(); // Remove '!' to store the option without it
+          line = line.substring(1).trim();
         }
 
         const match = line.match(/^([A-Z])\.(.*)/);
@@ -54,7 +53,6 @@ export default function Home() {
           const optionText = line;
           options.push(optionText);
 
-          // If the option is correct, add it to the correctAnswers list
           if (isCorrect) {
             const optionLetter = optionText.split(".")[0];
             correctAnswers.push(optionLetter);
@@ -77,7 +75,7 @@ export default function Home() {
   const handleQuestionsSubmit = (
     questions: string,
     answers: string,
-    format: "inline" | "separate" | "markdown" // Include "markdown" here
+    format: "inline" | "separate" | "markdown"
   ) => {
     const parsedQuestions = parseQuestions(questions, answers, format);
     setQuestions(parsedQuestions);
@@ -85,7 +83,10 @@ export default function Home() {
 
   return (
     <main className="container mx-auto p-4 space-y-8">
-      <h1 className="text-3xl font-bold"> VALIMCQ</h1>
+      <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
+        {" "}
+        VALIMCQ
+      </h1>
       <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       {questions.length > 0 && <QuestionDisplay questions={questions} />}
     </main>
