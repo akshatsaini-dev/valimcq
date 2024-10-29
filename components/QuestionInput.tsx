@@ -17,8 +17,9 @@ interface QuestionInputProps {
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
+  // Set the default format to "markdown"
   const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
-    "inline"
+    "markdown"
   );
 
   const handleSubmit = (e: React.FormEvent) => {
