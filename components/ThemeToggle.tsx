@@ -1,6 +1,7 @@
 // components/ThemeToggle.js
 "use client"; // Ensure this component can manage state
 
+import { MoonIcon, SunIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
@@ -29,9 +30,13 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded pppangaia bg-gray-200 dark:bg-gray-700"
+      className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center" // Adjusted for circular shape
     >
-      {isDark ? "Light Mode" : "Dark Mode"}
+      {isDark ? (
+        <SunIcon className="h-6 w-6 text-gray-800 dark:text-gray-200" /> // Adjusted size to fit the button
+      ) : (
+        <MoonIcon className="h-6 w-6 text-gray-800 dark:text-gray-200" /> // Adjusted size to fit the button
+      )}
     </button>
   );
 };

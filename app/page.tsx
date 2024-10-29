@@ -83,13 +83,17 @@ export default function Home() {
   };
 
   return (
-    <main className="container mx-auto p-4 space-y-4">
+    <main className="relative container mx-auto p-4 space-y-4">
       <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
         VALIMCQ
       </h1>
       <p className="text-sm pppangaia text-gray-500">made by axshatInd</p>
 
-      <ThemeToggle />
+      {/* Position the ThemeToggle button in the top right corner */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       {questions.length > 0 && <QuestionDisplay questions={questions} />}
     </main>
