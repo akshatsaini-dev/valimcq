@@ -29,7 +29,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded bg-gray-200 dark:bg-gray-700"
+      className="p-2 rounded pppangaia bg-gray-200 dark:bg-gray-700"
     >
       {isDark ? "Light Mode" : "Dark Mode"}
     </button>

@@ -96,7 +96,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
           </CardContent>
         </Card>
       ))}
-      <Button onClick={() => setShowResults(true)} className="w-full">
+      <Button onClick={() => setShowResults(true)} className="w-full pppangaia">
         Check Answers
       </Button>
       {showResults && (

@@ -42,7 +42,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="format">Select Input Format</Label>
+        <Label htmlFor="format" className="pppangaia">
+          Select Input Format
+        </Label>
         <RadioGroup
           id="format"
           value={format}
@@ -53,15 +55,21 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="inline" id="inline" />
-            <Label htmlFor="inline">Answers with each question</Label>
+            <Label htmlFor="inline" className="pppangaia">
+              Answers with each question
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="separate" id="separate" />
-            <Label htmlFor="separate">Answers at the end</Label>
+            <Label htmlFor="separate" className="pppangaia">
+              Answers at the end
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="markdown" id="markdown" />
-            <Label htmlFor="markdown">Answers as Markdown</Label>
+            <Label htmlFor="markdown" className="pppangaia">
+              Answers as Markdown
+            </Label>
           </div>
         </RadioGroup>
       </div>
@@ -79,7 +87,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           className="min-h-[200px]" // Increased height
         />
       )}
-      <Button type="submit">Submit Questions</Button>
+      <Button type="submit" className="pppangaia">
+        Submit Questions
+      </Button>
     </form>
   );
 }

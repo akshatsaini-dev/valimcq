@@ -9,8 +9,13 @@
   font-style: normal;
 }
 
-body {
+.pppangaia {
   font-family: "PPPangaia", Arial, Helvetica, sans-serif; /* Fallback fonts */
+}
+
+body {
+  font-family: "Open Sans", Arial, Helvetica, sans-serif; /* Set Open Sans as the default font */
+  font-weight: 500; /* Set the default font weight to Medium (500) */
 }
 
 @font-face {
