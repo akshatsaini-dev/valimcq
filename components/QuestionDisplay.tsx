@@ -60,6 +60,13 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
     if (showResults) calculateScore();
   }, [showResults]);
 
+  // Reset function for retest
+  const handleRetest = () => {
+    setSelectedAnswers({});
+    setScore({ correct: 0, total: 0 });
+    setShowResults(false);
+  };
+
   return (
     <div className="space-y-6">
       {questions.map((question, index) => (
@@ -103,6 +110,11 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
         <div className="text-center text-xl font-bold">
           Score: {score.correct}/{score.total}
         </div>
+      )}
+      {showResults && (
+        <Button onClick={handleRetest} className="w-full pppangaia">
+          Retest
+        </Button>
       )}
     </div>
   );
