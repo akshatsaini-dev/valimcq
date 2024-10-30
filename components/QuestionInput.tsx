@@ -18,6 +18,7 @@ interface SavedInput {
   questions: string;
   answers: string;
   format: "inline" | "separate" | "markdown";
+  timestamp: string;
 }
 
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
@@ -37,7 +38,12 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   // Save current input on form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newInput: SavedInput = { questions, answers, format };
+    const newInput: SavedInput = {
+      questions,
+      answers,
+      format,
+      timestamp: new Date().toLocaleString(), // Get current system time
+    };
 
     const isDuplicate = savedInputs.some(
       (input) =>
@@ -47,7 +53,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     );
 
     if (!isDuplicate) {
-      const updatedInputs = [...savedInputs, newInput];
+      const updatedInputs = [newInput, ...savedInputs]; // Add new input to the start
       setSavedInputs(updatedInputs);
       localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     }
@@ -140,7 +146,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                 className="cursor-pointer"
               >
                 <p>{input.questions.slice(0, 50)}...</p>{" "}
-                <small className="text-gray-500">{input.format} format</small>
+                <small className="text-gray-500">
+                  {input.format} format - {input.timestamp}
+                </small>
               </div>
               <Button
                 onClick={() => handleDeleteInput(index)}
