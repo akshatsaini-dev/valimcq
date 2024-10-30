@@ -14,7 +14,6 @@ interface QuestionInputProps {
   ) => void;
 }
 
-// Define the structure of each saved input
 interface SavedInput {
   questions: string;
   answers: string;
@@ -40,7 +39,6 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     e.preventDefault();
     const newInput: SavedInput = { questions, answers, format };
 
-    // Check if the input already exists in savedInputs
     const isDuplicate = savedInputs.some(
       (input) =>
         input.questions === questions &&
@@ -48,29 +46,23 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         input.format === format
     );
 
-    // If it's not a duplicate, save it
     if (!isDuplicate) {
       const updatedInputs = [...savedInputs, newInput];
-
-      // Update state and save to localStorage
       setSavedInputs(updatedInputs);
       localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     }
 
-    // Call onQuestionsSubmit callback and clear inputs
     onQuestionsSubmit(questions, answers, format);
     setQuestions("");
     setAnswers("");
   };
 
-  // Re-populate form fields when clicking on a saved input
   const handleLoadInput = (input: SavedInput) => {
     setQuestions(input.questions);
     setAnswers(input.answers);
     setFormat(input.format);
   };
 
-  // Delete a specific saved input
   const handleDeleteInput = (index: number) => {
     const updatedInputs = savedInputs.filter((_, i) => i !== index);
     setSavedInputs(updatedInputs);
@@ -134,33 +126,34 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         <Button type="submit">Submit Questions</Button>
       </div>
 
-      {/* Display saved inputs */}
-      <div className="space-y-2 pt-4">
-        <h3 className="text-lg font-semibold">Saved Inputs:</h3>
-        {savedInputs.map((input, index) => (
-          <div
-            key={index}
-            className="border p-2 flex justify-between items-center"
-          >
+      {/* Display saved inputs if there are any */}
+      {savedInputs.length > 0 && (
+        <div className="space-y-2 pt-4">
+          <h3 className="text-lg font-semibold">Saved Inputs:</h3>
+          {savedInputs.map((input, index) => (
             <div
-              onClick={() => handleLoadInput(input)}
-              className="cursor-pointer"
+              key={index}
+              className="border p-2 flex justify-between items-center"
             >
-              <p>{input.questions.slice(0, 50)}...</p>{" "}
-              {/* Display preview of saved question */}
-              <small className="text-gray-500">{input.format} format</small>
+              <div
+                onClick={() => handleLoadInput(input)}
+                className="cursor-pointer"
+              >
+                <p>{input.questions.slice(0, 50)}...</p>{" "}
+                <small className="text-gray-500">{input.format} format</small>
+              </div>
+              <Button
+                onClick={() => handleDeleteInput(index)}
+                variant="destructive"
+                size="sm"
+                className="ml-4"
+              >
+                Delete
+              </Button>
             </div>
-            <Button
-              onClick={() => handleDeleteInput(index)}
-              variant="destructive"
-              size="sm"
-              className="ml-4"
-            >
-              Delete
-            </Button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </form>
   );
 }
