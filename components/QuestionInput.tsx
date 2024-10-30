@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -20,20 +20,64 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
     "markdown"
   );
+  const [savedInputs, setSavedInputs] = useState([]);
 
+  // Load saved inputs from localStorage on component mount
+  useEffect(() => {
+    const savedData = JSON.parse(localStorage.getItem("savedInputs") || "[]");
+    setSavedInputs(savedData);
+  }, []);
+
+  // Save current input on form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const newInput = { questions, answers, format };
+
+    // Check if the input already exists in savedInputs
+    const isDuplicate = savedInputs.some(
+      (input) =>
+        input.questions === questions &&
+        input.answers === answers &&
+        input.format === format
+    );
+
+    // If it's not a duplicate, save it
+    if (!isDuplicate) {
+      const updatedInputs = [...savedInputs, newInput];
+
+      // Update state and save to localStorage
+      setSavedInputs(updatedInputs);
+      localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
+    }
+
+    // Call onQuestionsSubmit callback and clear inputs
     onQuestionsSubmit(questions, answers, format);
+    setQuestions("");
+    setAnswers("");
+  };
+
+  // Re-populate form fields when clicking on a saved input
+  const handleLoadInput = (input) => {
+    setQuestions(input.questions);
+    setAnswers(input.answers);
+    setFormat(input.format);
+  };
+
+  // Delete a specific saved input
+  const handleDeleteInput = (index: number) => {
+    const updatedInputs = savedInputs.filter((_, i) => i !== index);
+    setSavedInputs(updatedInputs);
+    localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
   };
 
   const getPlaceholder = () => {
     switch (format) {
       case "inline":
-        return `Paste your MCQ questions with answers here...\nExample for correct Input format:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\nAns: B\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views\nAns: A,C,E`;
+        return `Paste your MCQ questions with answers here...\nExample format:\n \n1. Question...\nA. Option\nB. Option\nAns: B`;
       case "separate":
-        return `Paste your MCQ questions here...\nExample for correct Input format for question:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views`;
+        return `Paste your MCQ questions here...\nExample format:\n \n1. Question...\nA. Option\nB. Option`;
       case "markdown":
-        return `Paste your MCQ questions...\nuse symbol ! for marking correct options,\n \nExample for correct Input format:\n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\n!B. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\n!A. Most recent update\nB. Popularity\n!C. Relevancy\nD. Manager assignment\n!E. Number of views`;
+        return `Paste your MCQ questions...\nUse symbol ! for marking correct options,\nExample:\n1. Question...\n!A. Correct\nB. Option`;
       default:
         return "";
     }
@@ -42,57 +86,73 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="format" className="pppangaia">
-          Select Input Flow
-        </Label>
+        <Label htmlFor="format">Select Input Flow</Label>
         <RadioGroup
           id="format"
           value={format}
           onValueChange={(value: "inline" | "separate" | "markdown") =>
             setFormat(value)
           }
-          className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 pt-4" // Added padding-top
+          className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 pt-4"
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="inline" id="inline" />
-            <Label htmlFor="inline" className="pppangaia">
-              Answers with each question
-            </Label>
+            <Label htmlFor="inline">Answers with each question</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="separate" id="separate" />
-            <Label htmlFor="separate" className="pppangaia">
-              Answers at the end
-            </Label>
+            <Label htmlFor="separate">Answers at the end</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="markdown" id="markdown" />
-            <Label htmlFor="markdown" className="pppangaia">
-              Answers as Markdown
-            </Label>
+            <Label htmlFor="markdown">Answers as Markdown</Label>
           </div>
         </RadioGroup>
       </div>
       <Textarea
-        placeholder={getPlaceholder()} // Always get the questions placeholder
+        placeholder={getPlaceholder()}
         value={questions}
         onChange={(e) => setQuestions(e.target.value)}
-        className="min-h-[400px]" // Increased height
+        className="min-h-[400px]"
       />
       {format === "separate" && (
         <Textarea
-          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
+          placeholder="Paste your answers here..."
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
-          className="min-h-[200px]" // Increased height
+          className="min-h-[200px]"
         />
       )}
       <div className="flex justify-end">
-        {" "}
-        {/* Align button to the right */}
-        <Button type="submit" className="pppangaia">
-          Submit Questions
-        </Button>
+        <Button type="submit">Submit Questions</Button>
+      </div>
+
+      {/* Display saved inputs */}
+      <div className="space-y-2 pt-4">
+        <h3 className="text-lg font-semibold">Saved Inputs:</h3>
+        {savedInputs.map((input, index) => (
+          <div
+            key={index}
+            className="border p-2 flex justify-between items-center"
+          >
+            <div
+              onClick={() => handleLoadInput(input)}
+              className="cursor-pointer"
+            >
+              <p>{input.questions.slice(0, 50)}...</p>{" "}
+              {/* Display preview of saved question */}
+              <small className="text-gray-500">{input.format} format</small>
+            </div>
+            <Button
+              onClick={() => handleDeleteInput(index)}
+              variant="destructive"
+              size="sm"
+              className="ml-4"
+            >
+              Delete
+            </Button>
+          </div>
+        ))}
       </div>
     </form>
   );
