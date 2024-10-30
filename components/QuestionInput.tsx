@@ -14,13 +14,20 @@ interface QuestionInputProps {
   ) => void;
 }
 
+// Define the structure of each saved input
+interface SavedInput {
+  questions: string;
+  answers: string;
+  format: "inline" | "separate" | "markdown";
+}
+
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
   const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
     "markdown"
   );
-  const [savedInputs, setSavedInputs] = useState([]);
+  const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
 
   // Load saved inputs from localStorage on component mount
   useEffect(() => {
@@ -31,7 +38,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   // Save current input on form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newInput = { questions, answers, format };
+    const newInput: SavedInput = { questions, answers, format };
 
     // Check if the input already exists in savedInputs
     const isDuplicate = savedInputs.some(
@@ -57,7 +64,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   };
 
   // Re-populate form fields when clicking on a saved input
-  const handleLoadInput = (input) => {
+  const handleLoadInput = (input: SavedInput) => {
     setQuestions(input.questions);
     setAnswers(input.answers);
     setFormat(input.format);
