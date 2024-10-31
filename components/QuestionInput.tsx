@@ -110,7 +110,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="markdown" id="markdown" />
-            <Label htmlFor="markdown">Answers as Markdown</Label>
+            <Label htmlFor="markdown">Symbol Marking</Label>
           </div>
         </RadioGroup>
       </div>
