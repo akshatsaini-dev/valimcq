@@ -24,6 +24,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
   const [shownAnswers, setShownAnswers] = useState<{ [key: number]: boolean }>(
     {}
   );
+  const [mode, setMode] = useState<"test" | "revision">("test"); // State for mode selection
 
   const handleOptionClick = (questionIndex: number, option: string) => {
     setSelectedAnswers((prev) => {
@@ -79,6 +80,23 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
 
   return (
     <div className="space-y-6">
+      {/* Mode selection toggle */}
+      <div className="flex justify-center mb-8 mt-8">
+        <Button
+          variant={mode === "test" ? "default" : "outline"}
+          onClick={() => setMode("test")}
+        >
+          Test Mode
+        </Button>
+        <Button
+          variant={mode === "revision" ? "default" : "outline"}
+          onClick={() => setMode("revision")}
+          className="ml-2"
+        >
+          Revision Mode
+        </Button>
+      </div>
+
       {questions.map((question, index) => (
         <Card key={index} className="p-2 sm:p-4">
           <CardHeader>
@@ -120,8 +138,8 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
               })}
             </div>
 
-            {/* Show Answers toggle button for individual questions */}
-            {questions.length >= 2 && (
+            {/* Show Answers toggle button for individual questions in Revision Mode */}
+            {mode === "revision" && (
               <div className="mt-4">
                 <Button
                   onClick={() => toggleShowAnswers(index)}
@@ -136,9 +154,15 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
         </Card>
       ))}
 
-      <Button onClick={() => setShowResults(true)} className="w-full pppangaia">
-        Check Answers
-      </Button>
+      {/* Check Answers button only in Test Mode */}
+      {mode === "test" && !showResults && (
+        <Button
+          onClick={() => setShowResults(true)}
+          className="w-full pppangaia"
+        >
+          Check Answers
+        </Button>
+      )}
 
       {showResults && (
         <Button onClick={handleRetest} className="w-full pppangaia">
