@@ -124,7 +124,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
                         : showResults && isSelected(index, option)
                         ? "bg-red-500 hover:bg-red-600"
                         : showHighlight
-                        ? "bg-purple-500"
+                        ? "bg-yellow-500"
                         : ""
                     }`}
                     aria-pressed={isSelected(index, option)}
@@ -143,7 +143,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
               <div className="mt-4">
                 <Button
                   onClick={() => toggleShowAnswers(index)}
-                  variant="secondary"
+                  variant="outline"
                   size="sm"
                 >
                   {shownAnswers[index] ? "Hide Answers" : "Show Answers"}
