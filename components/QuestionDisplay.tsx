@@ -21,6 +21,9 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
     correct: 0,
     total: 0,
   });
+  const [shownAnswers, setShownAnswers] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   const handleOptionClick = (questionIndex: number, option: string) => {
     setSelectedAnswers((prev) => {
@@ -60,11 +63,18 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
     if (showResults) calculateScore();
   }, [showResults]);
 
-  // Reset function for retest
   const handleRetest = () => {
     setSelectedAnswers({});
     setScore({ correct: 0, total: 0 });
     setShowResults(false);
+    setShownAnswers({});
+  };
+
+  const toggleShowAnswers = (index: number) => {
+    setShownAnswers((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
 
   return (
@@ -79,38 +89,63 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
 
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-              {question.options.map((option, optionIndex) => (
-                <Button
-                  key={optionIndex}
-                  onClick={() => handleOptionClick(index, option)}
-                  variant={isSelected(index, option) ? "default" : "outline"}
-                  className={`justify-start break-words whitespace-normal min-h-[3rem] h-auto ${
-                    showResults && isCorrect(index, option)
-                      ? "bg-green-500 hover:bg-green-600"
-                      : showResults && isSelected(index, option)
-                      ? "bg-red-500 hover:bg-red-600"
-                      : ""
-                  }`}
-                  aria-pressed={isSelected(index, option)}
-                  aria-label={`Option ${option.split(".")[0]}: ${option
-                    .split(".")[1]
-                    .trim()}`}
-                >
-                  {option}
-                </Button>
-              ))}
+              {question.options.map((option, optionIndex) => {
+                const isOptionCorrect = question.correctAnswers.includes(
+                  option.split(".")[0]
+                );
+                const showHighlight = shownAnswers[index] && isOptionCorrect;
+
+                return (
+                  <Button
+                    key={optionIndex}
+                    onClick={() => handleOptionClick(index, option)}
+                    variant={isSelected(index, option) ? "default" : "outline"}
+                    className={`justify-start break-words whitespace-normal min-h-[3rem] h-auto ${
+                      showResults && isCorrect(index, option)
+                        ? "bg-green-500 hover:bg-green-600"
+                        : showResults && isSelected(index, option)
+                        ? "bg-red-500 hover:bg-red-600"
+                        : showHighlight
+                        ? "bg-purple-500"
+                        : ""
+                    }`}
+                    aria-pressed={isSelected(index, option)}
+                    aria-label={`Option ${option.split(".")[0]}: ${option
+                      .split(".")[1]
+                      .trim()}`}
+                  >
+                    {option}
+                  </Button>
+                );
+              })}
             </div>
+
+            {/* Show Answers toggle button for individual questions */}
+            {questions.length >= 2 && (
+              <div className="mt-4">
+                <Button
+                  onClick={() => toggleShowAnswers(index)}
+                  variant="secondary"
+                  size="sm"
+                >
+                  {shownAnswers[index] ? "Hide Answers" : "Show Answers"}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
+
       <Button onClick={() => setShowResults(true)} className="w-full pppangaia">
         Check Answers
       </Button>
+
       {showResults && (
         <Button onClick={handleRetest} className="w-full pppangaia">
           Retest
         </Button>
       )}
+
       {showResults && (
         <div className="text-center text-xl font-bold">
           Score: {score.correct}/{score.total}
