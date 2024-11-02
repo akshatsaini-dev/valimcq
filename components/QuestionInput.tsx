@@ -19,6 +19,7 @@ interface SavedInput {
   answers: string;
   format: "inline" | "separate" | "markdown";
   timestamp: string;
+  title?: string; // Added title property
 }
 
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
@@ -28,6 +29,8 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     "markdown"
   );
   const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [newTitle, setNewTitle] = useState<string>(""); // Ensure this is always a string
 
   // Load saved inputs from localStorage on component mount
   useEffect(() => {
@@ -43,6 +46,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       answers,
       format,
       timestamp: new Date().toLocaleString(), // Get current system time
+      title: newTitle, // Save the title with the input
     };
 
     const isDuplicate = savedInputs.some(
@@ -61,18 +65,39 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     onQuestionsSubmit(questions, answers, format);
     setQuestions("");
     setAnswers("");
+    setNewTitle(""); // Clear title after submission
   };
 
   const handleLoadInput = (input: SavedInput) => {
     setQuestions(input.questions);
     setAnswers(input.answers);
     setFormat(input.format);
+    setNewTitle(input.title || ""); // Load the title into the input if available
   };
 
   const handleDeleteInput = (index: number) => {
     const updatedInputs = savedInputs.filter((_, i) => i !== index);
     setSavedInputs(updatedInputs);
     localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
+  };
+
+  const handleEditTitle = (index: number) => {
+    setEditingIndex(index);
+    setNewTitle(savedInputs[index].title || ""); // Ensure we always set a string
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTitle(e.target.value);
+  };
+
+  const handleTitleSubmit = (index: number) => {
+    const updatedInputs = savedInputs.map((input, i) =>
+      i === index ? { ...input, title: newTitle } : input
+    );
+    setSavedInputs(updatedInputs);
+    localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
+    setEditingIndex(null);
+    setNewTitle(""); // Clear new title after saving
   };
 
   const getPlaceholder = () => {
@@ -139,19 +164,38 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           {savedInputs.map((input, index) => (
             <div
               key={index}
-              className="border p-2 flex justify-between items-center"
+              className="border p-2 flex justify-between items-center cursor-pointer"
+              onClick={() => handleLoadInput(input)} // Handle single click to load input
             >
               <div
-                onClick={() => handleLoadInput(input)}
-                className="cursor-pointer"
+                onDoubleClick={() => handleEditTitle(index)}
+                className="flex-grow"
               >
-                <p>{input.questions.slice(0, 50)}...</p>{" "}
-                <small className="text-gray-500">
-                  {input.format} format - {input.timestamp}
-                </small>
+                {editingIndex === index ? (
+                  <input
+                    type="text"
+                    value={newTitle} // Always provide a value to prevent controlled/uncontrolled warning
+                    onChange={handleTitleChange}
+                    onBlur={() => handleTitleSubmit(index)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleTitleSubmit(index);
+                    }}
+                    className="border p-1 w-full"
+                  />
+                ) : (
+                  <>
+                    <p>{input.title || "Untitled"}</p> {/* Display title */}
+                    <small className="text-gray-500">
+                      {input.format} format - {input.timestamp}
+                    </small>
+                  </>
+                )}
               </div>
               <Button
-                onClick={() => handleDeleteInput(index)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent triggering handleLoadInput when deleting
+                  handleDeleteInput(index);
+                }}
                 variant="destructive"
                 size="sm"
                 className="ml-4"
