@@ -89,3 +89,10 @@ body {
     @apply bg-background text-foreground; /* Ensure body uses background and text color variables */
   }
 }
+
+/* styles/globals.css */
+html {
+  scroll-behavior: auto; /* Disable the native smooth scrolling */
+}
+
+/* Add any additional styles here */

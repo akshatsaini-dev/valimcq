@@ -1,5 +1,8 @@
-import type { Metadata } from "next";
+// app/layout.tsx
+
+import { Metadata } from "next";
 import localFont from "next/font/local";
+import SmoothScrollWrapper from "../components/SmoothScrollWrapper";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -34,7 +37,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SmoothScrollWrapper>{children}</SmoothScrollWrapper>
       </body>
     </html>
   );

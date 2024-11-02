@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion"; // Import motion from framer-motion
 import { QuestionInput } from "../components/QuestionInput";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { parseAnswers } from "../components/AnswerParser";
@@ -84,9 +85,15 @@ export default function Home() {
 
   return (
     <main className="container mx-auto p-4 space-y-4">
-      <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
+      <motion.h1
+        className="text-3xl font-bold"
+        style={{ fontFamily: "Knowhere" }}
+        initial={{ opacity: 0, y: -50 }} // Start state
+        animate={{ opacity: 1, y: 0 }} // Animate to this state
+        transition={{ duration: 0.5 }} // Transition duration
+      >
         VALIMCQ
-      </h1>
+      </motion.h1>
       <a
         href="https://www.linkedin.com/in/axshatind"
         target="_blank"
@@ -114,8 +121,23 @@ export default function Home() {
         <ThemeToggle />
       </div>
 
-      <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
-      {questions.length > 0 && <QuestionDisplay questions={questions} />}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
+      </motion.div>
+
+      {questions.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <QuestionDisplay questions={questions} />
+        </motion.div>
+      )}
     </main>
   );
 }
