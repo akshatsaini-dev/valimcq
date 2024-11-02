@@ -83,7 +83,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative container mx-auto p-4 space-y-4">
+    <main className="container mx-auto p-4 space-y-4">
       <h1 className="text-3xl font-bold" style={{ fontFamily: "Knowhere" }}>
         VALIMCQ
       </h1>
@@ -110,7 +110,7 @@ export default function Home() {
       </a>
 
       {/* Position the ThemeToggle button in the top right corner */}
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute flex flex-col col-span-2 top-1 right-4 z-50">
         <ThemeToggle />
       </div>
 
