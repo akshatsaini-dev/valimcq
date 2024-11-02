@@ -101,16 +101,16 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 pt-4"
         >
           <div className="flex items-center space-x-2">
+            <RadioGroupItem value="markdown" id="markdown" />
+            <Label htmlFor="markdown">Symbol Marking</Label>
+          </div>
+          <div className="flex items-center space-x-2">
             <RadioGroupItem value="inline" id="inline" />
             <Label htmlFor="inline">Answers with each question</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="separate" id="separate" />
             <Label htmlFor="separate">Answers at the end</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="markdown" id="markdown" />
-            <Label htmlFor="markdown">Symbol Marking</Label>
           </div>
         </RadioGroup>
       </div>
