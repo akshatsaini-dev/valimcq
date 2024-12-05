@@ -21,10 +21,9 @@ export default function Home() {
     answers: string,
     format: "inline" | "separate" | "markdown" | "docx"
   ): Question[] => {
-    const questionBlocks =
-      format === "docx"
-        ? input.split("\n")
-        : input.split(/\d+\./).filter((block) => block.trim() !== "");
+    const questionBlocks = input
+      .split(/\d+\./)
+      .filter((block) => block.trim() !== "");
 
     let parsedAnswers: string[][] = [];
 
