@@ -20,7 +20,7 @@ interface SavedInput {
   answers: string;
   format: "inline" | "separate" | "markdown" | "docx";
   timestamp: string;
-  title?: string;
+  title?: string; // Added title property
 }
 
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
@@ -31,7 +31,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   >("markdown");
   const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newTitle, setNewTitle] = useState<string>("");
+  const [newTitle, setNewTitle] = useState<string>(""); // Ensure this is always a string
 
   // Load saved inputs from localStorage on component mount
   useEffect(() => {
@@ -45,8 +45,8 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       questions,
       answers,
       format,
-      timestamp: new Date().toLocaleString(),
-      title: newTitle,
+      timestamp: new Date().toLocaleString(), // Get current system time
+      title: newTitle, // Save the title with the input
     };
 
     const isDuplicate = savedInputs.some(
@@ -57,7 +57,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     );
 
     if (!isDuplicate) {
-      const updatedInputs = [newInput, ...savedInputs];
+      const updatedInputs = [newInput, ...savedInputs]; // Add new input to the start
       setSavedInputs(updatedInputs);
       localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     }
@@ -66,6 +66,13 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setQuestions("");
     setAnswers("");
     setNewTitle("");
+  };
+
+  const handleLoadInput = (input: SavedInput) => {
+    setQuestions(input.questions);
+    setAnswers(input.answers);
+    setFormat(input.format);
+    setNewTitle(input.title || ""); // Load the title into the input if available
   };
 
   const handleDocxUpload = async (file: File) => {
@@ -99,7 +106,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
 
   const handleEditTitle = (index: number) => {
     setEditingIndex(index);
-    setNewTitle(savedInputs[index].title || "");
+    setNewTitle(savedInputs[index].title || ""); // Ensure we always set a string
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,17 +120,17 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setSavedInputs(updatedInputs);
     localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     setEditingIndex(null);
-    setNewTitle("");
+    setNewTitle(""); // Clear new title after saving
   };
 
   const getPlaceholder = () => {
     switch (format) {
       case "inline":
-        return `Paste your MCQ questions with answers here...`;
+        return `Paste your MCQ questions with answers here...\nExample for correct Input format:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\nAns: B\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views\nAns: A,C,E`;
       case "separate":
-        return `Paste your MCQ questions here...`;
+        return `Paste your MCQ questions here...\nExample for correct Input format for question:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views`;
       case "markdown":
-        return `Paste your MCQ questions...`;
+        return `Paste your MCQ questions...\nuse symbol ! for marking correct options,\n \nExample for correct Input format:\n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\n!B. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\n!A. Most recent update\nB. Popularity\n!C. Relevancy\nD. Manager assignment\n!E. Number of views`;
       case "docx":
         return `Upload your DOCX file with questions...`;
       default:
@@ -181,7 +188,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       )}
       {format === "separate" && (
         <Textarea
-          placeholder={`Paste your answers here...`}
+          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
           className="min-h-[200px]"
@@ -191,13 +198,15 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         <Button type="submit">Submit Questions</Button>
       </div>
 
+      {/* Display saved inputs if there are any */}
       {savedInputs.length > 0 && (
         <div className="space-y-2 pt-4">
           <h3 className="text-lg font-semibold">Saved Inputs:</h3>
           {savedInputs.map((input, index) => (
             <div
               key={index}
-              className="border p-2 flex justify-between items-center"
+              className="border p-2 flex justify-between items-center cursor-pointer"
+              onClick={() => handleLoadInput(input)}
             >
               <div
                 onDoubleClick={() => handleEditTitle(index)}
@@ -206,7 +215,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                 {editingIndex === index ? (
                   <input
                     type="text"
-                    value={newTitle}
+                    value={newTitle} // Always provide a value to prevent controlled/uncontrolled warning
                     onChange={handleTitleChange}
                     onBlur={() => handleTitleSubmit(index)}
                     onKeyDown={(e) => {
@@ -216,7 +225,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                   />
                 ) : (
                   <>
-                    <p>{input.title || "Untitled"}</p>
+                    <p>{input.title || "Untitled"}</p> {/* Display title */}
                     <small className="text-gray-500">
                       {input.format} format - {input.timestamp}
                     </small>
@@ -225,7 +234,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
               </div>
               <Button
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.stopPropagation(); // Prevent triggering handleLoadInput when deleting
                   handleDeleteInput(index);
                 }}
                 variant="destructive"
