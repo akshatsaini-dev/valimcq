@@ -5,32 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import mammoth from "mammoth";
 
 interface QuestionInputProps {
   onQuestionsSubmit: (
     questions: string,
     answers: string,
-    format: "inline" | "separate" | "markdown"
+    format: "inline" | "separate" | "markdown" | "docx"
   ) => void;
 }
 
 interface SavedInput {
   questions: string;
   answers: string;
-  format: "inline" | "separate" | "markdown";
+  format: "inline" | "separate" | "markdown" | "docx";
   timestamp: string;
-  title?: string; // Added title property
+  title?: string;
 }
 
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
-  const [format, setFormat] = useState<"inline" | "separate" | "markdown">(
-    "markdown"
-  );
+  const [format, setFormat] = useState<
+    "inline" | "separate" | "markdown" | "docx"
+  >("markdown");
   const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newTitle, setNewTitle] = useState<string>(""); // Ensure this is always a string
+  const [newTitle, setNewTitle] = useState<string>("");
 
   // Load saved inputs from localStorage on component mount
   useEffect(() => {
@@ -38,15 +39,14 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setSavedInputs(savedData);
   }, []);
 
-  // Save current input on form submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newInput: SavedInput = {
       questions,
       answers,
       format,
-      timestamp: new Date().toLocaleString(), // Get current system time
-      title: newTitle, // Save the title with the input
+      timestamp: new Date().toLocaleString(),
+      title: newTitle,
     };
 
     const isDuplicate = savedInputs.some(
@@ -57,7 +57,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     );
 
     if (!isDuplicate) {
-      const updatedInputs = [newInput, ...savedInputs]; // Add new input to the start
+      const updatedInputs = [newInput, ...savedInputs];
       setSavedInputs(updatedInputs);
       localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     }
@@ -65,14 +65,30 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     onQuestionsSubmit(questions, answers, format);
     setQuestions("");
     setAnswers("");
-    setNewTitle(""); // Clear title after submission
+    setNewTitle("");
   };
 
-  const handleLoadInput = (input: SavedInput) => {
-    setQuestions(input.questions);
-    setAnswers(input.answers);
-    setFormat(input.format);
-    setNewTitle(input.title || ""); // Load the title into the input if available
+  const handleDocxUpload = async (file: File) => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const { value } = await mammoth.extractRawText({ arrayBuffer });
+      setQuestions(parseDocxContent(value)); // Parse content from DOCX and set questions
+    } catch (error) {
+      console.error("Error reading .docx file:", error);
+      alert("Failed to read the .docx file. Please try again.");
+    }
+  };
+
+  const parseDocxContent = (content: string): string => {
+    // Here, the function processes the DOCX content where correct answers are marked with "!"
+    const lines = content.split("\n");
+    const parsedContent = lines.map((line) => {
+      if (line.startsWith("!")) {
+        return line.substring(1).trim(); // Remove "!" from correct answers
+      }
+      return line;
+    });
+    return parsedContent.join("\n");
   };
 
   const handleDeleteInput = (index: number) => {
@@ -83,7 +99,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
 
   const handleEditTitle = (index: number) => {
     setEditingIndex(index);
-    setNewTitle(savedInputs[index].title || ""); // Ensure we always set a string
+    setNewTitle(savedInputs[index].title || "");
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,17 +113,19 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setSavedInputs(updatedInputs);
     localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     setEditingIndex(null);
-    setNewTitle(""); // Clear new title after saving
+    setNewTitle("");
   };
 
   const getPlaceholder = () => {
     switch (format) {
       case "inline":
-        return `Paste your MCQ questions with answers here...\nExample for correct Input format:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\nAns: B\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views\nAns: A,C,E`;
+        return `Paste your MCQ questions with answers here...`;
       case "separate":
-        return `Paste your MCQ questions here...\nExample for correct Input format for question:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views`;
+        return `Paste your MCQ questions here...`;
       case "markdown":
-        return `Paste your MCQ questions...\nuse symbol ! for marking correct options,\n \nExample for correct Input format:\n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\n!B. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\n!A. Most recent update\nB. Popularity\n!C. Relevancy\nD. Manager assignment\n!E. Number of views`;
+        return `Paste your MCQ questions...`;
+      case "docx":
+        return `Upload your DOCX file with questions...`;
       default:
         return "";
     }
@@ -120,7 +138,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         <RadioGroup
           id="format"
           value={format}
-          onValueChange={(value: "inline" | "separate" | "markdown") =>
+          onValueChange={(value: "inline" | "separate" | "markdown" | "docx") =>
             setFormat(value)
           }
           className="flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 pt-4"
@@ -137,35 +155,49 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
             <RadioGroupItem value="separate" id="separate" />
             <Label htmlFor="separate">Answers at the end</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="docx" id="docx" />
+            <Label htmlFor="docx">Answers with Docx import</Label>
+          </div>
         </RadioGroup>
       </div>
-      <Textarea
-        placeholder={getPlaceholder()}
-        value={questions}
-        onChange={(e) => setQuestions(e.target.value)}
-        className="min-h-[400px]"
-      />
+      {format === "docx" ? (
+        <div className="mt-4">
+          <Label>Upload .docx file</Label>
+          <input
+            type="file"
+            accept=".docx"
+            onChange={(e) => handleDocxUpload(e.target.files?.[0]!)}
+            className="block w-full mt-2 border p-2"
+          />
+        </div>
+      ) : (
+        <Textarea
+          placeholder={getPlaceholder()}
+          value={questions}
+          onChange={(e) => setQuestions(e.target.value)}
+          className="min-h-[400px]"
+        />
+      )}
       {format === "separate" && (
         <Textarea
-          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
+          placeholder={`Paste your answers here...`}
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
-          className="min-h-[200px]" // Increased height
+          className="min-h-[200px]"
         />
       )}
       <div className="flex justify-end">
         <Button type="submit">Submit Questions</Button>
       </div>
 
-      {/* Display saved inputs if there are any */}
       {savedInputs.length > 0 && (
         <div className="space-y-2 pt-4">
           <h3 className="text-lg font-semibold">Saved Inputs:</h3>
           {savedInputs.map((input, index) => (
             <div
               key={index}
-              className="border p-2 flex justify-between items-center cursor-pointer"
-              onClick={() => handleLoadInput(input)} // Handle single click to load input
+              className="border p-2 flex justify-between items-center"
             >
               <div
                 onDoubleClick={() => handleEditTitle(index)}
@@ -174,7 +206,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                 {editingIndex === index ? (
                   <input
                     type="text"
-                    value={newTitle} // Always provide a value to prevent controlled/uncontrolled warning
+                    value={newTitle}
                     onChange={handleTitleChange}
                     onBlur={() => handleTitleSubmit(index)}
                     onKeyDown={(e) => {
@@ -184,7 +216,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                   />
                 ) : (
                   <>
-                    <p>{input.title || "Untitled"}</p> {/* Display title */}
+                    <p>{input.title || "Untitled"}</p>
                     <small className="text-gray-500">
                       {input.format} format - {input.timestamp}
                     </small>
@@ -193,7 +225,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
               </div>
               <Button
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering handleLoadInput when deleting
+                  e.stopPropagation();
                   handleDeleteInput(index);
                 }}
                 variant="destructive"
