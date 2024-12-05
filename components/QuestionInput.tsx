@@ -79,7 +79,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const { value } = await mammoth.extractRawText({ arrayBuffer });
-      setQuestions(parseDocxContent(value)); // Parse content from DOCX and set questions
+      const formattedContent = parseDocxContent(value); // Parse content from DOCX
+      setQuestions(formattedContent); // Set parsed questions
+      onQuestionsSubmit(formattedContent, "", "docx"); // Pass the content as docx format
     } catch (error) {
       console.error("Error reading .docx file:", error);
       alert("Failed to read the .docx file. Please try again.");

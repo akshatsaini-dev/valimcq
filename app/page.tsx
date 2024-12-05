@@ -19,11 +19,12 @@ export default function Home() {
   const parseQuestions = (
     input: string,
     answers: string,
-    format: "inline" | "separate" | "markdown"
+    format: "inline" | "separate" | "markdown" | "docx"
   ): Question[] => {
-    const questionBlocks = input
-      .split(/\d+\./)
-      .filter((block) => block.trim() !== "");
+    const questionBlocks =
+      format === "docx"
+        ? input.split("\n")
+        : input.split(/\d+\./).filter((block) => block.trim() !== "");
 
     let parsedAnswers: string[][] = [];
 
@@ -77,7 +78,7 @@ export default function Home() {
   const handleQuestionsSubmit = (
     questions: string,
     answers: string,
-    format: "inline" | "separate" | "markdown"
+    format: "inline" | "separate" | "markdown" | "docx" // Add the 'docx' format
   ) => {
     const parsedQuestions = parseQuestions(questions, answers, format);
     setQuestions(parsedQuestions);
