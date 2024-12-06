@@ -89,15 +89,8 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   };
 
   const parseDocxContent = (content: string): string => {
-    // Here, the function processes the DOCX content where correct answers are marked with "!"
-    const lines = content.split("\n");
-    const parsedContent = lines.map((line) => {
-      if (line.startsWith("!")) {
-        return line.substring(1).trim(); // Remove "!" from correct answers
-      }
-      return line;
-    });
-    return parsedContent.join("\n");
+    // Directly return content as it contains `!` for correct answers
+    return content;
   };
 
   const handleDeleteInput = (index: number) => {

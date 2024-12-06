@@ -45,7 +45,11 @@ export default function Home() {
         let line = lines[i];
         let isCorrect = false;
 
-        if (format === "markdown" && line.startsWith("!")) {
+        // Handle both markdown and docx formats for marking correct answers
+        if (
+          (format === "markdown" || format === "docx") &&
+          line.startsWith("!")
+        ) {
           isCorrect = true;
           line = line.substring(1).trim();
         }
