@@ -140,7 +140,11 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="format" className="font-medium text-xl">
+        <Label
+          htmlFor="format"
+          className="font-medium text-xl"
+          style={{ fontFamily: "PPPangaia" }}
+        >
           Select Input Flow -
         </Label>
         <RadioGroup
@@ -171,7 +175,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       </div>
       {format === "docx" ? (
         <div className="mt-4">
-          <Label>Upload .docx file</Label>
+          <Label>
+            Upload .docx file with same format as "! Symbol Marked" input flow
+          </Label>
           <input
             type="file"
             accept=".docx"
@@ -214,7 +220,10 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       </div>
 
       <div className="mt-4">
-        <h3 className="text-xl font-medium mt-6 mb-6 text-red-500">
+        <h3
+          className="text-xl font-medium mt-6 mb-6 text-red-500"
+          style={{ fontFamily: "PPPangaia" }}
+        >
           Saved Inputs:
         </h3>
 

@@ -91,7 +91,7 @@ export default function Home() {
     <main className="container mx-auto p-4 space-y-4">
       <motion.h1
         className="text-3xl font-bold"
-        style={{ fontFamily: "Knowhere" }}
+        style={{ fontFamily: "PPPangaia" }}
         initial={{ opacity: 0, y: -50 }} // Start state
         animate={{ opacity: 1, y: 0 }} // Animate to this state
         transition={{ duration: 0.5 }} // Transition duration
