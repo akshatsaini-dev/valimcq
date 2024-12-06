@@ -32,11 +32,13 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newTitle, setNewTitle] = useState<string>(""); // Ensure this is always a string
+  const [mounted, setMounted] = useState(false); // Track if component has mounted
 
   // Load saved inputs from localStorage on component mount
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem("savedInputs") || "[]");
     setSavedInputs(savedData);
+    setMounted(true); // Set mounted to true after the component mounts
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,7 +47,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       questions,
       answers,
       format,
-      timestamp: new Date().toLocaleString(), // Get current system time
+      timestamp: new Date().toLocaleString(), // Get current system time (this will only run on the client)
       title: newTitle, // Save the title with the input
     };
 
@@ -133,6 +135,8 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     }
   };
 
+  if (!mounted) return null; // Avoid rendering during SSR to prevent hydration error
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
@@ -169,79 +173,85 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           <input
             type="file"
             accept=".docx"
-            onChange={(e) => handleDocxUpload(e.target.files?.[0]!)}
-            className="block w-full mt-2 border p-2"
+            onChange={(e) =>
+              e.target.files && handleDocxUpload(e.target.files[0])
+            }
           />
         </div>
       ) : (
-        <Textarea
-          placeholder={getPlaceholder()}
-          value={questions}
-          onChange={(e) => setQuestions(e.target.value)}
-          className="min-h-[400px]"
-        />
-      )}
-      {format === "separate" && (
-        <Textarea
-          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
-          value={answers}
-          onChange={(e) => setAnswers(e.target.value)}
-          className="min-h-[200px]"
-        />
-      )}
-      <div className="flex justify-end">
-        <Button type="submit">Submit Questions</Button>
-      </div>
-
-      {/* Display saved inputs if there are any */}
-      {savedInputs.length > 0 && (
-        <div className="space-y-2 pt-4">
-          <h3 className="text-lg font-semibold">Saved Inputs:</h3>
-          {savedInputs.map((input, index) => (
-            <div
-              key={index}
-              className="border p-2 flex justify-between items-center cursor-pointer"
-              onClick={() => handleLoadInput(input)}
-            >
-              <div
-                onDoubleClick={() => handleEditTitle(index)}
-                className="flex-grow"
-              >
-                {editingIndex === index ? (
-                  <input
-                    type="text"
-                    value={newTitle} // Always provide a value to prevent controlled/uncontrolled warning
-                    onChange={handleTitleChange}
-                    onBlur={() => handleTitleSubmit(index)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleTitleSubmit(index);
-                    }}
-                    className="border p-1 w-full"
-                  />
-                ) : (
-                  <>
-                    <p>{input.title || "Untitled"}</p> {/* Display title */}
-                    <small className="text-gray-500">
-                      {input.format} format - {input.timestamp}
-                    </small>
-                  </>
-                )}
-              </div>
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering handleLoadInput when deleting
-                  handleDeleteInput(index);
-                }}
-                variant="destructive"
-                size="sm"
-                className="ml-4"
-              >
-                Delete
-              </Button>
-            </div>
-          ))}
+        <div className="mt-4">
+          <Label>Questions (For Multiple Choice)</Label>
+          <Textarea
+            placeholder={getPlaceholder()}
+            value={questions}
+            onChange={(e) => setQuestions(e.target.value)}
+            rows={8}
+            className="resize-none"
+          />
         </div>
       )}
+      <div className="mt-4">
+        <Label>Answers (for Markdown format only)</Label>
+        <Textarea
+          placeholder="Write the answers here"
+          value={answers}
+          onChange={(e) => setAnswers(e.target.value)}
+          rows={4}
+          className="resize-none"
+        />
+      </div>
+      <div className="mt-4">
+        <Label>Title (Optional)</Label>
+        <input
+          type="text"
+          value={newTitle}
+          onChange={handleTitleChange}
+          placeholder="Enter the title (optional)"
+          className="w-full px-4 py-2 mt-2 border rounded-md"
+        />
+      </div>
+      <Button type="submit" className="mt-4">
+        Save & Submit
+      </Button>
+      <div className="mt-4">
+        <h3>Saved Inputs:</h3>
+        <ul>
+          {savedInputs.map((input, index) => (
+            <li key={index} className="mb-2">
+              <strong>{input.title || `Untitled - ${index + 1}`}</strong>{" "}
+              (Added: {input.timestamp})
+              <div>
+                <Button variant="link" onClick={() => handleLoadInput(input)}>
+                  Load
+                </Button>
+                <Button variant="link" onClick={() => handleDeleteInput(index)}>
+                  Delete
+                </Button>
+                <Button variant="link" onClick={() => handleEditTitle(index)}>
+                  Edit Title
+                </Button>
+              </div>
+              {editingIndex === index && (
+                <div>
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={handleTitleChange}
+                    placeholder="Enter new title"
+                    className="mt-2 border rounded-md p-2"
+                  />
+                  <Button
+                    onClick={() => handleTitleSubmit(index)}
+                    className="mt-2"
+                  >
+                    Save Title
+                  </Button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </form>
   );
 }
