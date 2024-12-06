@@ -176,45 +176,44 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
             onChange={(e) =>
               e.target.files && handleDocxUpload(e.target.files[0])
             }
+            className="block w-full mt-2 border p-2"
           />
         </div>
       ) : (
-        <div className="mt-4">
-          <Label>Questions (For Multiple Choice)</Label>
-          <Textarea
-            placeholder={getPlaceholder()}
-            value={questions}
-            onChange={(e) => setQuestions(e.target.value)}
-            rows={8}
-            className="resize-none"
-          />
-        </div>
-      )}
-      <div className="mt-4">
-        <Label>Answers (for Markdown format only)</Label>
         <Textarea
-          placeholder="Write the answers here"
+          placeholder={getPlaceholder()}
+          value={questions}
+          onChange={(e) => setQuestions(e.target.value)}
+          className="min-h-[400px]"
+        />
+      )}
+      {format === "separate" && (
+        <Textarea
+          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
-          rows={4}
-          className="resize-none"
+          className="min-h-[200px]"
         />
+      )}
+      <div className="flex flex-col items-end w-full">
+        <div className="mt-4 w-full">
+          <Label>Save Title (Optional)</Label>
+          <input
+            type="text"
+            value={newTitle}
+            onChange={handleTitleChange}
+            placeholder="Enter the title (optional)"
+            className="w-full px-4 py-2 mt-2 border rounded-md text-black dark:text-black"
+          />
+        </div>
+        <Button type="submit" className="mt-4 self-end">
+          Save & Submit
+        </Button>
       </div>
+
       <div className="mt-4">
-        <Label>Title (Optional)</Label>
-        <input
-          type="text"
-          value={newTitle}
-          onChange={handleTitleChange}
-          placeholder="Enter the title (optional)"
-          className="w-full px-4 py-2 mt-2 border rounded-md"
-        />
-      </div>
-      <Button type="submit" className="mt-4">
-        Save & Submit
-      </Button>
-      <div className="mt-4">
-        <h3>Saved Inputs:</h3>
+        <h3 className="text-2xl font-semibold mt-6 mb-6">Saved Inputs:</h3>
+
         <ul>
           {savedInputs.map((input, index) => (
             <li key={index} className="mb-2">

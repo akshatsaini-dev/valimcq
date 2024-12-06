@@ -42,7 +42,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Wrap content in SmoothScrollWrapper */}
-        <SmoothScrollWrapper>{children}</SmoothScrollWrapper>
+        {/* // <SmoothScrollWrapper>{children}</SmoothScrollWrapper>*/}
+        {children}
         {/* Add the ScrollToBottom button */}
         <ScrollToBottom />
       </body>
