@@ -140,7 +140,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="format">Select Input Flow</Label>
+        <Label htmlFor="format" className="font-medium text-xl">
+          Select Input Flow -
+        </Label>
         <RadioGroup
           id="format"
           value={format}
@@ -212,7 +214,9 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
       </div>
 
       <div className="mt-4">
-        <h3 className="text-2xl font-semibold mt-6 mb-6">Saved Inputs:</h3>
+        <h3 className="text-xl font-medium mt-6 mb-6 text-red-500">
+          Saved Inputs:
+        </h3>
 
         <ul>
           {savedInputs.map((input, index) => (
