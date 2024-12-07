@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import SmoothScrollWrapper from "../components/SmoothScrollWrapper";
 import ScrollToBottom from "../components/ScrollToBottom";
+import ScrollToTop from "../components/ScrollToTop";
 import "./globals.css";
 
 // Define local fonts
@@ -44,8 +45,9 @@ export default function RootLayout({
         {/* Wrap content in SmoothScrollWrapper */}
         {/* // <SmoothScrollWrapper>{children}</SmoothScrollWrapper>*/}
         {children}
-        {/* Add the ScrollToBottom button */}
+        {/* Add the ScrollToBottom and ScrollToTop buttons */}
         <ScrollToBottom />
+        <ScrollToTop />
       </body>
     </html>
   );
