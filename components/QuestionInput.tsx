@@ -211,9 +211,10 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
             value={newTitle}
             onChange={handleTitleChange}
             placeholder="Enter the title (optional)"
-            className="w-full px-4 py-2 mt-2 border rounded-md text-black dark:text-black"
+            className="w-full px-4 py-2 mt-2 border rounded-md bg-transparent text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
           />
         </div>
+
         <Button type="submit" className="mt-4 self-end">
           Save & Submit
         </Button>
