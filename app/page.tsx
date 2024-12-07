@@ -45,7 +45,6 @@ export default function Home() {
         let line = lines[i];
         let isCorrect = false;
 
-        // Handle both markdown and docx formats for marking correct answers
         if (
           (format === "markdown" || format === "docx") &&
           line.startsWith("!")
@@ -81,36 +80,72 @@ export default function Home() {
   const handleQuestionsSubmit = (
     questions: string,
     answers: string,
-    format: "inline" | "separate" | "markdown" | "docx" // Add the 'docx' format
+    format: "inline" | "separate" | "markdown" | "docx"
   ) => {
     const parsedQuestions = parseQuestions(questions, answers, format);
     setQuestions(parsedQuestions);
   };
 
+  // Animation Variants
+  const container = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const letter = {
+    hidden: { opacity: 0, y: 50, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 15,
+      },
+    },
+  };
+
   return (
     <main className="container mx-auto p-4 space-y-4">
-      <motion.h1
-        className="text-3xl font-bold"
-        style={{ fontFamily: "PPPangaia" }}
-        initial={{ opacity: 0, y: -50 }} // Start state
-        animate={{ opacity: 1, y: 0 }} // Animate to this state
-        transition={{ duration: 0.5 }} // Transition duration
+      {/* Animated Title */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className="flex justify-center space-x-2"
       >
-        VALIMCQ
-      </motion.h1>
+        {"VALIMCQ".split("").map((char, index) => (
+          <motion.span
+            key={index}
+            variants={letter}
+            className="text-3xl font-bold"
+            style={{ fontFamily: "PPPangaia" }}
+          >
+            {char}
+          </motion.span>
+        ))}
+      </motion.div>
+
+      {/* Animated Link */}
       <motion.a
         href="https://www.linkedin.com/in/axshatind"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center space-x-2" // Adjust spacing as needed
-        initial={{ opacity: 0, y: 20 }} // Initial animation state
-        animate={{ opacity: 1, y: 0 }} // Animation target state
-        transition={{ duration: 0.5 }} // Transition duration
+        className="flex items-center space-x-2 justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
         <span className="text-sm pppangaia text-gray-500 flex items-center">
           made by axshatInd
           <svg
-            className="h-4 w-4 text-gray-500 ml-1" // Adjust size and margin as needed
+            className="h-4 w-4 text-gray-500 ml-1"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
             viewBox="0 0 24 24"
@@ -120,11 +155,12 @@ export default function Home() {
         </span>
       </motion.a>
 
-      {/* Position the ThemeToggle button in the top right corner */}
+      {/* Theme Toggle Button */}
       <div className="absolute flex flex-col col-span-2 top-1 right-4 z-50">
         <ThemeToggle />
       </div>
 
+      {/* Question Input */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -133,6 +169,7 @@ export default function Home() {
         <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       </motion.div>
 
+      {/* Question Display */}
       {questions.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
