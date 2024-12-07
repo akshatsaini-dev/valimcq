@@ -122,16 +122,29 @@ export default function Home() {
         animate="visible"
         className="flex justify-center space-x-2"
       >
-        {"VALIMCQ".split("").map((char, index) => (
-          <motion.span
-            key={index}
-            variants={letter}
-            className="text-3xl font-bold"
-            style={{ fontFamily: "PPPangaia" }}
-          >
-            {char}
-          </motion.span>
-        ))}
+        {"VALIMCQ".split("").map((char, index) => {
+          // Define gradient styles for each letter
+          const gradients = [
+            "bg-gradient-to-r from-yellow-600 to-yellow-500", // V
+            "bg-gradient-to-r from-yellow-900 to-yellow-300", // A
+            "bg-gradient-to-r from-yellow-600 to-yellow-900", // L
+            "bg-gradient-to-r from-yellow-900 to-yellow-300", // I
+            "bg-gradient-to-r from-yellow-600 to-yellow-400", // M
+            "bg-gradient-to-r from-yellow-500 to-yellow-900", // C
+            "bg-gradient-to-r from-yellow-900 to-yellow-400", // Q
+          ];
+
+          return (
+            <motion.span
+              key={index}
+              variants={letter}
+              className={`text-3xl font-bold text-transparent bg-clip-text ${gradients[index]}`}
+              style={{ fontFamily: "PPPangaia" }}
+            >
+              {char}
+            </motion.span>
+          );
+        })}
       </motion.div>
 
       {/* Animated Link */}
