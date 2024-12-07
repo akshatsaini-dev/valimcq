@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion"; // Import motion from framer-motion
+import { motion } from "framer-motion";
 import { QuestionInput } from "../components/QuestionInput";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { parseAnswers } from "../components/AnswerParser";
@@ -92,7 +92,7 @@ export default function Home() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
+        staggerChildren: 0.15, // Stagger animation for letters
       },
     },
   };
@@ -110,6 +110,8 @@ export default function Home() {
       },
     },
   };
+
+  const delayAfterVALIMCQ = 0.15 * "VALIMCQ".length; // Delay based on stagger timing
 
   return (
     <main className="container mx-auto p-4 space-y-4">
@@ -140,7 +142,10 @@ export default function Home() {
         className="flex items-center space-x-2 justify-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{
+          duration: 0.5,
+          delay: delayAfterVALIMCQ, // Delay after title animation
+        }}
       >
         <span className="text-sm pppangaia text-gray-500 flex items-center">
           made by axshatInd
@@ -164,7 +169,10 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{
+          duration: 0.5,
+          delay: delayAfterVALIMCQ + 0.5, // Additional delay after the link animation
+        }}
       >
         <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
       </motion.div>
@@ -174,7 +182,10 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{
+            duration: 0.5,
+            delay: delayAfterVALIMCQ + 1, // Further delay for questions display
+          }}
         >
           <QuestionDisplay questions={questions} />
         </motion.div>
