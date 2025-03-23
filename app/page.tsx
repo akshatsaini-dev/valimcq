@@ -115,36 +115,60 @@ export default function Home() {
 
   return (
     <main className="container mx-auto p-4 space-y-4">
-      {/* Animated Title */}
+      {/* Animated Title with Death Mohawk Wings Effect */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="visible"
-        className="flex justify-center space-x-2"
+        className="flex justify-center items-center space-x-2"
       >
-        {"VALIMCQ".split("").map((char, index) => {
-          // Define gradient styles for each letter
-          const gradients = [
-            "bg-gradient-to-r from-yellow-600 to-yellow-500", // V
-            "bg-gradient-to-r from-yellow-900 to-yellow-300", // A
-            "bg-gradient-to-r from-yellow-600 to-yellow-900", // L
-            "bg-gradient-to-r from-yellow-900 to-yellow-300", // I
-            "bg-gradient-to-r from-yellow-600 to-yellow-400", // M
-            "bg-gradient-to-r from-yellow-500 to-yellow-900", // C
-            "bg-gradient-to-r from-yellow-900 to-yellow-400", // Q
-          ];
+        {/* Left Wing (Appears After Letters) */}
+        <motion.span
+          className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
+          initial={{ x: -50, scale: 0.5, rotate: -30, opacity: 0 }}
+          animate={{ x: 0, scale: 1.2, rotate: 0, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 200,
+            damping: 10,
+            delay: 0.8, // Delay after letters
+          }}
+        >
+          {"{"}
+        </motion.span>
 
-          return (
-            <motion.span
-              key={index}
-              variants={letter}
-              className={`text-6xl light:text-white dark:text-white bg-clip-text}`}
-              style={{ fontFamily: "DeathMohawk" }}
-            >
-              {char}
-            </motion.span>
-          );
-        })}
+        {/* Center Text Animation */}
+        {"VALIMCQ".split("").map((char, index) => (
+          <motion.span
+            key={index}
+            initial={{ y: -50, scale: 0.8, rotate: -10, opacity: 0 }}
+            animate={{ y: 0, scale: 1, rotate: 0, opacity: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 15,
+              delay: index * 0.1, // Staggered animation
+            }}
+            className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
+          >
+            {char}
+          </motion.span>
+        ))}
+
+        {/* Right Wing (Appears After Letters) */}
+        <motion.span
+          className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
+          initial={{ x: 50, scale: 0.5, rotate: 30, opacity: 0 }}
+          animate={{ x: 0, scale: 1.2, rotate: 0, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 200,
+            damping: 10,
+            delay: 0.8, // Delay after letters
+          }}
+        >
+          {"}"}
+        </motion.span>
       </motion.div>
 
       {/* Animated Link */}
@@ -160,7 +184,7 @@ export default function Home() {
           delay: delayAfterVALIMCQ, // Delay after title animation
         }}
       >
-        <span className="text-sm pppangaia text-gray-500 flex items-center">
+        <span className="text-sm text-gray-500 flex items-center">
           made by axshatInd
           <svg
             className="h-4 w-4 text-gray-500 ml-1"
