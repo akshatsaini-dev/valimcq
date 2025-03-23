@@ -138,8 +138,8 @@ export default function Home() {
             <motion.span
               key={index}
               variants={letter}
-              className={`text-3xl font-bold text-transparent bg-clip-text ${gradients[index]}`}
-              style={{ fontFamily: "PPPangaia" }}
+              className={`text-6xl light:text-white dark:text-white bg-clip-text}`}
+              style={{ fontFamily: "DeathMohawk" }}
             >
               {char}
             </motion.span>

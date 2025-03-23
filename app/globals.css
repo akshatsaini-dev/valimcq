@@ -25,6 +25,13 @@ body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: "DeathMohawk";
+  src: url("/Fonts/DeathMohawk.otf") format("opentype"); /* Adjust path as needed */
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
