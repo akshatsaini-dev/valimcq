@@ -12,37 +12,32 @@ interface QuestionDisplayProps {
   questions: Question[];
 }
 
+// QuestionDisplay: renders MCQs with Test/Revision modes, selection, scoring, and per-question reveal
 export function QuestionDisplay({ questions }: QuestionDisplayProps) {
-  const [selectedAnswers, setSelectedAnswers] = useState<{
-    [key: number]: Set<string>;
-  }>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: Set<string> }>({});
   const [showResults, setShowResults] = useState(false);
-  const [score, setScore] = useState<{ correct: number; total: number }>({
-    correct: 0,
-    total: 0,
-  });
-  const [shownAnswers, setShownAnswers] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-  const [mode, setMode] = useState<"test" | "revision">("test"); // State for mode selection
+  const [score, setScore] = useState<{ correct: number; total: number }>({ correct: 0, total: 0 });
+  const [shownAnswers, setShownAnswers] = useState<{ [key: number]: boolean }>({});
+  const [mode, setMode] = useState<"test" | "revision">("test");
 
+  // Toggles selection of an option for a given question (supports multi-select)
   const handleOptionClick = (questionIndex: number, option: string) => {
     setSelectedAnswers((prev) => {
       const newAnswers = new Set(prev[questionIndex] || []);
-      newAnswers.has(option)
-        ? newAnswers.delete(option)
-        : newAnswers.add(option);
+      newAnswers.has(option) ? newAnswers.delete(option) : newAnswers.add(option);
       return { ...prev, [questionIndex]: newAnswers };
     });
   };
 
+  // Returns true if the option is correct and results are being shown
   const isCorrect = (questionIndex: number, option: string) =>
-    showResults &&
-    questions[questionIndex].correctAnswers.includes(option.split(".")[0]);
+    showResults && questions[questionIndex].correctAnswers.includes(option.split(".")[0]);
 
+  // Returns true if the option is currently selected
   const isSelected = (questionIndex: number, option: string) =>
     selectedAnswers[questionIndex]?.has(option) || false;
 
+  // Computes total score by exact set equality between selected and correct answers
   const calculateScore = () => {
     let correctCount = 0;
     questions.forEach((question, index) => {
@@ -60,10 +55,12 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
     setScore({ correct: correctCount, total: questions.length });
   };
 
+  // Recalculate score when toggling results visibility
   useEffect(() => {
     if (showResults) calculateScore();
   }, [showResults]);
 
+  // Resets selections, results, and per-question reveals for a fresh attempt
   const handleRetest = () => {
     setSelectedAnswers({});
     setScore({ correct: 0, total: 0 });
@@ -71,6 +68,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
     setShownAnswers({});
   };
 
+  // Toggles correct-answer highlighting for a specific question (Revision mode)
   const toggleShowAnswers = (index: number) => {
     setShownAnswers((prev) => ({
       ...prev,
@@ -138,7 +136,7 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
               })}
             </div>
 
-            {/* Show Answers toggle button for individual questions in Revision Mode */}
+            {/* Show Answers toggle (Revision Mode only) */}
             {mode === "revision" && (
               <div className="mt-4">
                 <Button
@@ -154,12 +152,9 @@ export function QuestionDisplay({ questions }: QuestionDisplayProps) {
         </Card>
       ))}
 
-      {/* Check Answers button only in Test Mode */}
+      {/* Check Answers (Test Mode only) */}
       {mode === "test" && !showResults && (
-        <Button
-          onClick={() => setShowResults(true)}
-          className="w-full pppangaia"
-        >
+        <Button onClick={() => setShowResults(true)} className="w-full pppangaia">
           Check Answers
         </Button>
       )}

@@ -20,35 +20,35 @@ interface SavedInput {
   answers: string;
   format: "inline" | "separate" | "markdown" | "docx";
   timestamp: string;
-  title?: string; // Added title property
+  title?: string; // Optional user-defined title for saved entries
 }
 
+// QuestionInput: captures questions/answers in multiple formats, supports DOCX import, and manages saved sessions
 export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
   const [questions, setQuestions] = useState("");
   const [answers, setAnswers] = useState("");
-  const [format, setFormat] = useState<
-    "inline" | "separate" | "markdown" | "docx"
-  >("markdown");
+  const [format, setFormat] = useState<"inline" | "separate" | "markdown" | "docx">("markdown");
   const [savedInputs, setSavedInputs] = useState<SavedInput[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newTitle, setNewTitle] = useState<string>(""); // Ensure this is always a string
-  const [mounted, setMounted] = useState(false); // Track if component has mounted
+  const [newTitle, setNewTitle] = useState<string>(""); // Title input for saved entry
+  const [mounted, setMounted] = useState(false); // Avoid SSR hydration mismatch
 
-  // Load saved inputs from localStorage on component mount
+  // Load saved inputs from localStorage when the component mounts
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem("savedInputs") || "[]");
     setSavedInputs(savedData);
-    setMounted(true); // Set mounted to true after the component mounts
+    setMounted(true);
   }, []);
 
+  // Handle form submission: save entry (deduped) and forward to parent for parsing/render
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newInput: SavedInput = {
       questions,
       answers,
       format,
-      timestamp: new Date().toLocaleString(), // Get current system time (this will only run on the client)
-      title: newTitle, // Save the title with the input
+      timestamp: new Date().toLocaleString(),
+      title: newTitle,
     };
 
     const isDuplicate = savedInputs.some(
@@ -59,7 +59,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     );
 
     if (!isDuplicate) {
-      const updatedInputs = [newInput, ...savedInputs]; // Add new input to the start
+      const updatedInputs = [newInput, ...savedInputs];
       setSavedInputs(updatedInputs);
       localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     }
@@ -70,46 +70,52 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setNewTitle("");
   };
 
+  // Load a previously saved input back into the form
   const handleLoadInput = (input: SavedInput) => {
     setQuestions(input.questions);
     setAnswers(input.answers);
     setFormat(input.format);
-    setNewTitle(input.title || ""); // Load the title into the input if available
+    setNewTitle(input.title || "");
   };
 
+  // Handle .docx upload, extract raw text, and submit as docx flow
   const handleDocxUpload = async (file: File) => {
     try {
       const arrayBuffer = await file.arrayBuffer();
       const { value } = await mammoth.extractRawText({ arrayBuffer });
-      const formattedContent = parseDocxContent(value); // Parse content from DOCX
-      setQuestions(formattedContent); // Set parsed questions
-      onQuestionsSubmit(formattedContent, "", "docx"); // Pass the content as docx format
+      const formattedContent = parseDocxContent(value);
+      setQuestions(formattedContent);
+      onQuestionsSubmit(formattedContent, "", "docx");
     } catch (error) {
       console.error("Error reading .docx file:", error);
       alert("Failed to read the .docx file. Please try again.");
     }
   };
 
+  // Parse DOCX text (here: pass-through since '!' marks are already included)
   const parseDocxContent = (content: string): string => {
-    // Directly return content as it contains `!` for correct answers
     return content;
   };
 
+  // Delete a saved input by index and persist the change
   const handleDeleteInput = (index: number) => {
     const updatedInputs = savedInputs.filter((_, i) => i !== index);
     setSavedInputs(updatedInputs);
     localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
   };
 
+  // Begin editing a saved input's title
   const handleEditTitle = (index: number) => {
     setEditingIndex(index);
-    setNewTitle(savedInputs[index].title || ""); // Ensure we always set a string
+    setNewTitle(savedInputs[index].title || "");
   };
 
+  // Track in-progress title edits
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewTitle(e.target.value);
   };
 
+  // Save the edited title for a specific saved input
   const handleTitleSubmit = (index: number) => {
     const updatedInputs = savedInputs.map((input, i) =>
       i === index ? { ...input, title: newTitle } : input
@@ -117,17 +123,63 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     setSavedInputs(updatedInputs);
     localStorage.setItem("savedInputs", JSON.stringify(updatedInputs));
     setEditingIndex(null);
-    setNewTitle(""); // Clear new title after saving
+    setNewTitle("");
   };
 
+  // Provide example placeholders tailored to the selected input format
   const getPlaceholder = () => {
     switch (format) {
       case "inline":
-        return `Paste your MCQ questions with answers here...\nExample for correct Input format:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\nAns: B\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views\nAns: A,C,E`;
+        return `Paste your MCQ questions with answers here...
+Example for correct Input format:
+ 
+1. Which term refers to application menus and modules which you may want to access quickly and often?
+A. Breadcrumb
+B. Favorite
+C. Tag
+D. Bookmark
+Ans: B
+
+2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)
+A. Most recent update
+B. Popularity
+C. Relevancy
+D. Manager assignment
+E. Number of views
+Ans: A,C,E`;
       case "separate":
-        return `Paste your MCQ questions here...\nExample for correct Input format for question:\n \n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\nB. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\nA. Most recent update\nB. Popularity\nC. Relevancy\nD. Manager assignment\nE. Number of views`;
+        return `Paste your MCQ questions here...
+Example for correct Input format for question:
+ 
+1. Which term refers to application menus and modules which you may want to access quickly and often?
+A. Breadcrumb
+B. Favorite
+C. Tag
+D. Bookmark
+
+2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)
+A. Most recent update
+B. Popularity
+C. Relevancy
+D. Manager assignment
+E. Number of views`;
       case "markdown":
-        return `Paste your MCQ questions...\nuse symbol ! for marking correct options,\n \nExample for correct Input format:\n1. Which term refers to application menus and modules which you may want to access quickly and often?\nA. Breadcrumb\n!B. Favorite\nC. Tag\nD. Bookmark\n\n2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)\n!A. Most recent update\nB. Popularity\n!C. Relevancy\nD. Manager assignment\n!E. Number of views`;
+        return `Paste your MCQ questions...
+use symbol ! for marking correct options,
+ 
+Example for correct Input format:
+1. Which term refers to application menus and modules which you may want to access quickly and often?
+A. Breadcrumb
+!B. Favorite
+C. Tag
+D. Bookmark
+
+2. Knowledge Base Search results can be sorted by which of the following? (Choose three.)
+!A. Most recent update
+B. Popularity
+!C. Relevancy
+D. Manager assignment
+!E. Number of views`;
       case "docx":
         return `Upload your DOCX file with questions...`;
       default:
@@ -135,10 +187,12 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
     }
   };
 
-  if (!mounted) return null; // Avoid rendering during SSR to prevent hydration error
+  // Avoid rendering on server to prevent hydration mismatch with localStorage usage
+  if (!mounted) return null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Input flow selector */}
       <div>
         <Label
           htmlFor="format"
@@ -173,6 +227,8 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           </div>
         </RadioGroup>
       </div>
+
+      {/* Questions input or DOCX uploader, based on selected flow */}
       {format === "docx" ? (
         <div className="mt-4">
           <Label>
@@ -192,17 +248,23 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
           placeholder={getPlaceholder()}
           value={questions}
           onChange={(e) => setQuestions(e.target.value)}
-          className="min-h-[400px]"
+          className="min-h:[400px] min-h-[400px]"
         />
       )}
+
+      {/* Separate answers textarea when using "separate" format */}
       {format === "separate" && (
         <Textarea
-          placeholder={`Paste your answers here...\nExample for correct Input format for answers:\nAns: 1. B; 2. A,C,E`}
+          placeholder={`Paste your answers here...
+Example for correct Input format for answers:
+Ans: 1. B; 2. A,C,E`}
           value={answers}
           onChange={(e) => setAnswers(e.target.value)}
           className="min-h-[200px]"
         />
       )}
+
+      {/* Title and submit controls */}
       <div className="flex flex-col items-end w-full">
         <div className="mt-4 w-full">
           <Label>Save Title (Optional)</Label>
@@ -220,6 +282,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
         </Button>
       </div>
 
+      {/* Saved inputs list with load/delete/edit title actions */}
       <div className="mt-4">
         <h3
           className="text-xl font-medium mt-6 mb-6 text-red-500"
@@ -244,6 +307,7 @@ export function QuestionInput({ onQuestionsSubmit }: QuestionInputProps) {
                   Edit Title
                 </Button>
               </div>
+
               {editingIndex === index && (
                 <div>
                   <input

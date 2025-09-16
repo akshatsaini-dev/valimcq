@@ -13,9 +13,11 @@ interface Question {
   correctAnswers: string[];
 }
 
+// Home page: orchestrates input -> parsing -> display, and handles title/link animations
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([]);
 
+  // Parses raw question text (and optional answers) into structured Question[]
   const parseQuestions = (
     input: string,
     answers: string,
@@ -77,6 +79,7 @@ export default function Home() {
     });
   };
 
+  // Handles input submission from QuestionInput and updates questions state
   const handleQuestionsSubmit = (
     questions: string,
     answers: string,
@@ -86,13 +89,13 @@ export default function Home() {
     setQuestions(parsedQuestions);
   };
 
-  // Animation Variants
+  // Framer Motion animation variants for container and letters
   const container = {
     hidden: { opacity: 1 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15, // Stagger animation for letters
+        staggerChildren: 0.15,
       },
     },
   };
@@ -111,7 +114,7 @@ export default function Home() {
     },
   };
 
-  const delayAfterVALIMCQ = 0.15 * "VALIMCQ".length; // Delay based on stagger timing
+  const delayAfterVALIMCQ = 0.15 * "VALIMCQ".length;
 
   return (
     <main className="container mx-auto p-4 space-y-4">
@@ -122,7 +125,7 @@ export default function Home() {
         animate="visible"
         className="flex justify-center items-center space-x-2"
       >
-        {/* Left Wing (Appears After Letters) */}
+        {/* Left Wing */}
         <motion.span
           className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
           initial={{ x: -50, scale: 0.5, rotate: -30, opacity: 0 }}
@@ -131,7 +134,7 @@ export default function Home() {
             type: "spring",
             stiffness: 200,
             damping: 10,
-            delay: 0.8, // Delay after letters
+            delay: 0.8,
           }}
         >
           {"{"}
@@ -147,7 +150,7 @@ export default function Home() {
               type: "spring",
               stiffness: 300,
               damping: 15,
-              delay: index * 0.1, // Staggered animation
+              delay: index * 0.1,
             }}
             className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
           >
@@ -155,7 +158,7 @@ export default function Home() {
           </motion.span>
         ))}
 
-        {/* Right Wing (Appears After Letters) */}
+        {/* Right Wing */}
         <motion.span
           className="text-6xl dark:text-white light:text-black font-['DeathMohawk']"
           initial={{ x: 50, scale: 0.5, rotate: 30, opacity: 0 }}
@@ -164,7 +167,7 @@ export default function Home() {
             type: "spring",
             stiffness: 200,
             damping: 10,
-            delay: 0.8, // Delay after letters
+            delay: 0.8,
           }}
         >
           {"}"}
@@ -181,7 +184,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.5,
-          delay: delayAfterVALIMCQ, // Delay after title animation
+          delay: delayAfterVALIMCQ,
         }}
       >
         <span className="text-sm text-gray-500 flex items-center">
@@ -208,7 +211,7 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         transition={{
           duration: 0.5,
-          delay: delayAfterVALIMCQ + 0.5, // Additional delay after the link animation
+          delay: delayAfterVALIMCQ + 0.5,
         }}
       >
         <QuestionInput onQuestionsSubmit={handleQuestionsSubmit} />
@@ -221,7 +224,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{
             duration: 0.5,
-            delay: delayAfterVALIMCQ + 1, // Further delay for questions display
+            delay: delayAfterVALIMCQ + 1,
           }}
         >
           <QuestionDisplay questions={questions} />
